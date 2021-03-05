@@ -8,12 +8,11 @@ int main(int argc, char** argv)
    
    ppm_image image;
    image.load("../images/feep.ppm");
+   cout <<"r 100 :  " << (int) image.get(0,1).r << endl;
    image.save("feep-test-save.ppm"); // should match original
-
 
    // should print 4 4
    cout << "loaded feep: " << image.width() << " " << image.height() << endl;
-
 /*
    // test: copy constructor
    ppm_image copy = image; 
@@ -37,7 +36,7 @@ int main(int argc, char** argv)
 
    // should print 400 400
    cout << "loaded earth: " << image.width() << " " << image.height() << endl;
-
+   
    // resize
    ppm_image resize = image.resize(200,300);
    resize.save("earth-200-300.ppm");

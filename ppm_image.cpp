@@ -10,7 +10,7 @@ ppm_image::ppm_image()
 {
    imageWidth = 0;
    imageHeight = 0;
-   pixelArray = new ppm_pixel*[0];
+   pixelArray= nullptr;
 
 }
 
@@ -19,13 +19,18 @@ ppm_image::ppm_image(int w, int h)
    imageWidth = w;
    imageHeight =h;
    pixelArray = new ppm_pixel*[h];
-   for(int i = 0; i < h; ++i)
-   pixelArray[i] = new ppm_pixel[w];
+   for (int i =0; i<h ;i++)
+   {
+      pixelArray[i] = new ppm_pixel[w];
+   }
 
 }
 
 ppm_image::ppm_image(const ppm_image& orig)
 {
+   imageWidth = orig.imageWidth;
+   imageHeight = orig.imageHeight;
+   pixelArray = orig.pixelArray;
 
 }
 
@@ -35,11 +40,10 @@ ppm_image& ppm_image::operator=(const ppm_image& orig)
    {
       return *this;
    }
-
    // todo: your code here
    imageHeight = orig.imageHeight;
    imageWidth = orig.imageWidth;
-   pixelArray = orig.pixelArray;
+   pixelArray = orig.pixelArray; 
    return *this;   
 }
 
@@ -50,6 +54,7 @@ ppm_image::~ppm_image()
 
 bool ppm_image::load(const std::string& filename)
 {
+   
    ifstream file(filename);
    cout<<"filename " << filename <<endl;
    string p3;
@@ -60,57 +65,45 @@ bool ppm_image::load(const std::string& filename)
       return 1;
    }
 
-      cout<< "inside IF " <<endl;
-      file >> p3; //this will store "P3"
-      cout << "Should be P3: " << p3 << endl;
-      file >> value; //width
-      cout << "Should be width: " << value << endl;
-      imageWidth =  value;
-      file >> value; //height
-      cout << "Should be height: " << value << endl;
-      imageHeight = value;
-      file >> value; //this will give the number 255
+   file >> p3; //this will store "P3"
+   file >> value; //width
+   imageWidth =  value;
+   file >> value; //height
+   imageHeight = value;
+   file >> value; //this will give the number 255
 
-      while(file){
-         for (ppm_pixel **j = pixelArray ; j < pixelArray + imageWidth; j++)
+   pixelArray = new ppm_pixel*[imageHeight];
+   for (int i =0; i<imageHeight ;i++)
+   {
+      pixelArray[i] = new ppm_pixel[imageWidth];
+   }
+   while(file)
+   {
+      for (int j = 0; j < imageHeight; j++) //rows
+      {
+         for (int k = 0; k < imageWidth; k++) //columns
          {
-            cout << *j <<endl;
-            cout << j <<endl;
-            for (ppm_pixel *k = *j; k < *j + imageHeight; k++)
-            {
-               cout << "entering Pixel Loop " << k <<endl; 
-               ppm_pixel tempPixel;
-               for (int i=0; i<3;i++){
-                  cout << "inside pixel"<<endl;
-                  file >> value;
-                  if(i == 0)
-                  {
-                     tempPixel.r = value;
-                     cout << "inside red"<< tempPixel.r <<endl;
-                  } 
-                  else if (i == 1)
-                  {
-                     tempPixel.g = value;
-                     cout << "inside green"<< tempPixel.g <<endl;
-                  }
-                  else
-                  {
-                     tempPixel.b = value;
-                      cout << "inside blue"<< tempPixel.b <<endl;
-                  }  
-               }
-               cout << "out of pixel loop  " <<endl; 
-               cout << "K" << k <<endl;
-               //cout << "*K" << *k <<endl;
-               cout<< &tempPixel <<endl;
-               *k = tempPixel;
-               cout << "K" << k <<endl;
-            }
+            ppm_pixel tempPixel;
+            int pixel;
+            //unsigned char r, g, b;
+            //r value of the pixel
+            file >> pixel ;
+            tempPixel.r = (unsigned char) pixel;
+            cout << tempPixel.r << "   -> pixel r value  -> the output file value ->" << pixel << endl;
+            //g value of the pixel
+            file >> pixel ;
+            tempPixel.g =  (unsigned char) pixel;
+            cout<< tempPixel.g <<"   -> pixel g value  -> the output file value ->" << pixel << endl;
+            //b value of the pixel
+            file >> pixel ;
+            tempPixel.b =  (unsigned char) pixel; 
+            cout<< tempPixel.b <<"   -> pixel b value  -> the output file value ->" << pixel << endl;
+            //pixel with r,g,b valus stored in the 2D array
+            pixelArray[j][k]= tempPixel;  
          }
       }
-         
-      return 0;
-
+   }   
+   return 0;
 }
 
 
@@ -119,12 +112,31 @@ bool ppm_image::save(const std::string& filename) const
    ofstream file(filename);
    if(!file)
    {
-      while(file)
-      {
-
-      }
+      return 1;
    }
-   return false;
+   string p3 = "P3";
+   file << p3; //this will store "P3"
+   file << imageWidth; //width
+   file << imageHeight; //height
+   int value = 255;
+   file << value; //this will give the number 255
+   
+   for (int j = 0; j < imageHeight; j++) //rows
+   {
+      for (int k = 0; k < imageWidth; k++) //columns
+      {
+         ppm_pixel tempPixel;
+         pixelArray[j][k]= tempPixel;  
+         //r value of the pixel stored in the file
+         file << tempPixel.r; 
+         //g value of the pixel stored in the file
+         file << tempPixel.g ;
+         //b value of the pixel stored in the file
+         file << tempPixel.b ;
+         }
+      }
+   file.close();
+   return 0;
 }
 
  ppm_image ppm_image::resize(int w, int h) const
@@ -169,14 +181,14 @@ ppm_image ppm_image::grayscale() const
 
 ppm_pixel ppm_image::get(int row, int col) const
 {
-   return pixelArray[row-1][col-1];
+   return pixelArray[row][col];
 }
 
 void ppm_image::set(int row, int col, const ppm_pixel& c)
 {
-   pixelArray[row-1][col-1].r = c.r;
-   pixelArray[row-1][col-1].g = c.g;
-   pixelArray[row-1][col-1].b = c.b;
+   pixelArray[row][col].r = c.r;
+   pixelArray[row][col].g = c.g;
+   pixelArray[row][col].b = c.b;
 
 }
 
