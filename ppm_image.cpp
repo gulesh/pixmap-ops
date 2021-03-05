@@ -85,23 +85,20 @@ bool ppm_image::load(const std::string& filename)
          {
             ppm_pixel tempPixel;
             int pixel;
-            //unsigned char r, g, b;
             //r value of the pixel
             file >> pixel ;
             tempPixel.r = (unsigned char) pixel;
-            cout << tempPixel.r << "   -> pixel r value  -> the output file value ->" << pixel << endl;
             //g value of the pixel
             file >> pixel ;
             tempPixel.g =  (unsigned char) pixel;
-            cout<< tempPixel.g <<"   -> pixel g value  -> the output file value ->" << pixel << endl;
             //b value of the pixel
             file >> pixel ;
             tempPixel.b =  (unsigned char) pixel; 
-            cout<< tempPixel.b <<"   -> pixel b value  -> the output file value ->" << pixel << endl;
             //pixel with r,g,b valus stored in the 2D array
             pixelArray[j][k]= tempPixel;  
          }
       }
+      return 0;
    }   
    return 0;
 }
@@ -123,16 +120,21 @@ bool ppm_image::save(const std::string& filename) const
    
    for (int j = 0; j < imageHeight; j++) //rows
    {
+      cout << "j :" << j << endl;
       for (int k = 0; k < imageWidth; k++) //columns
       {
+         cout << "k :" << k << endl;
          ppm_pixel tempPixel;
-         pixelArray[j][k]= tempPixel;  
+         pixelArray[j][k]= tempPixel; 
          //r value of the pixel stored in the file
-         file << tempPixel.r; 
+         file << (int) tempPixel.r; 
+         cout << (int) tempPixel.r <<endl;
          //g value of the pixel stored in the file
-         file << tempPixel.g ;
+         file << (int) tempPixel.g ;
+         cout << (int) tempPixel.g <<endl;
          //b value of the pixel stored in the file
-         file << tempPixel.b ;
+         file << (int) tempPixel.b ;
+         cout << (int) tempPixel.b <<endl;
          }
       }
    file.close();
