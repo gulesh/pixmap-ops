@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <cmath>
 
 using namespace agl;
 using namespace std;
@@ -40,7 +41,7 @@ ppm_image& ppm_image::operator=(const ppm_image& orig)
    {
       return *this;
    }
-   // todo: your code here
+
    imageHeight = orig.imageHeight;
    imageWidth = orig.imageWidth;
    pixelArray = orig.pixelArray; 
@@ -49,8 +50,19 @@ ppm_image& ppm_image::operator=(const ppm_image& orig)
 
 ppm_image::~ppm_image()
 {
+   for (int i = 0; i < imageHeight; i++)
+   {
+      delete[] pixelArray[i];
+   }
+   delete[] pixelArray;
    
 }
+ppm_image func(int w, int h)
+{
+  ppm_image  imageInstance =  ppm_image( w,  h); // init with width and height
+   // set pixels on image
+   return imageInstance;
+} 
 
 bool ppm_image::load(const std::string& filename)
 {
@@ -112,29 +124,27 @@ bool ppm_image::save(const std::string& filename) const
       return 1;
    }
    string p3 = "P3";
-   file << p3; //this will store "P3"
-   file << imageWidth; //width
-   file << imageHeight; //height
+   file << p3 << endl; //this will store "P3"
+   file << imageWidth << endl; //width
+   file << imageHeight << endl; //height
    int value = 255;
-   file << value; //this will give the number 255
+   file << value << endl;//this will give the number 255
    
    for (int j = 0; j < imageHeight; j++) //rows
    {
-      cout << "j :" << j << endl;
       for (int k = 0; k < imageWidth; k++) //columns
       {
-         cout << "k :" << k << endl;
          ppm_pixel tempPixel;
-         pixelArray[j][k]= tempPixel; 
+         tempPixel = pixelArray[j][k]; 
          //r value of the pixel stored in the file
-         file << (int) tempPixel.r; 
-         cout << (int) tempPixel.r <<endl;
+         file << (int) tempPixel.r <<endl; 
+         //cout << (int) tempPixel.r <<endl;
          //g value of the pixel stored in the file
-         file << (int) tempPixel.g ;
-         cout << (int) tempPixel.g <<endl;
+         file << (int) tempPixel.g << endl;
+         //cout << (int) tempPixel.g <<endl;
          //b value of the pixel stored in the file
-         file << (int) tempPixel.b ;
-         cout << (int) tempPixel.b <<endl;
+         file << (int) tempPixel.b << endl;
+         //cout << (int) tempPixel.b <<endl;
          }
       }
    file.close();
@@ -143,19 +153,50 @@ bool ppm_image::save(const std::string& filename) const
 
  ppm_image ppm_image::resize(int w, int h) const
 {
-    ppm_image result;
+   int  oldPixelC, oldPixelR;
+    ppm_image result = func(w,h);
+    for (int i = 0 ; i < h; i++)
+    {
+       for (int j = 0; j < w ;j++)
+       {
+          oldPixelR = floor( (i * (imageHeight - 1))/(h-1)  );
+          oldPixelC = floor( (j * (imageWidth - 1))/(w-1)   );
+          result.pixelArray[i][j].r = pixelArray[oldPixelR][oldPixelC].r;
+          result.pixelArray[i][j].g = pixelArray[oldPixelR][oldPixelC].g;
+          result.pixelArray[i][j].b = pixelArray[oldPixelR][oldPixelC].b;
+       }
+    }
+
     return result;
 }
 
 ppm_image ppm_image::flip_horizontal() const
 {
-    ppm_image result;
+    ppm_image result = func(imageWidth,imageHeight);
+    for (int i = 0 ; i <imageHeight; i++)
+    {
+       for (int j = imageWidth -1 ; j >= 0 ;j--)
+       {
+          result.pixelArray[i][imageWidth-j+1]= pixelArray[i][j];
+       }
+    }
+
     return result;
 }
 
 ppm_image ppm_image::subimage(int startx, int starty, int w, int h) const
 {
-    ppm_image result;
+    ppm_image result = func(w,h);
+    for (int i = 0 ; i < h; i++)
+    {
+       for (int j = 0; j < w ;j++)
+       {
+          result.pixelArray[i][j].r = pixelArray[i+startx][j+starty].r;
+          result.pixelArray[i][j].g = pixelArray[i+startx][j+starty].g;
+          result.pixelArray[i][j].b = pixelArray[i+startx][j+starty].b;
+       }
+    }
+
     return result;
 }
 
@@ -171,14 +212,44 @@ ppm_image ppm_image::alpha_blend(const ppm_image& other, float alpha) const
 
 ppm_image ppm_image::gammaCorrect(float gamma) const
 {
-   ppm_image result;
-   return result;
+   int gCorrectedR, gCorrectedG, gCorrectedB;
+   ppm_image result = func(imageWidth,imageHeight);
+    for (int i = 0 ; i < imageHeight; i++)
+    {
+       for (int j = 0; j < imageWidth ;j++)
+       {
+         gCorrectedR = 255 * pow(((float) pixelArray[i][j].r)/255, 1/gamma);
+         gCorrectedG = 255 * pow(((float) pixelArray[i][j].g)/255, 1/gamma);
+         gCorrectedB = 255 * pow(((float) pixelArray[i][j].b)/255, 1/gamma);
+         //setting new pixel color
+         result.pixelArray[i][j].r = (unsigned char) gCorrectedR;
+         result.pixelArray[i][j].g = (unsigned char) gCorrectedG;
+         result.pixelArray[i][j].b = (unsigned char) gCorrectedB;
+       }
+    }
+    return result;
 }
 
 ppm_image ppm_image::grayscale() const
 {
-   ppm_image result;
-   return result;
+   int r,g,b,weightedAvg;
+   ppm_image result = func(imageWidth,imageHeight);
+    for (int i = 0 ; i < imageHeight; i++)
+    {
+       for (int j = 0 ; j < imageWidth  ;j++)
+       {
+         ppm_pixel modifyingPixel = pixelArray[i][j];
+         r = modifyingPixel.r;
+         g = modifyingPixel.g;
+         b = modifyingPixel.b;
+         weightedAvg = 0.3 * r + 0.59 * g + 0.11 * b;
+         modifyingPixel.b = weightedAvg;
+         modifyingPixel.g = weightedAvg;
+         modifyingPixel.r = weightedAvg;
+         result.pixelArray[i][j] = modifyingPixel;
+       }
+    }
+    return result;
 }
 
 ppm_pixel ppm_image::get(int row, int col) const
@@ -203,3 +274,4 @@ int ppm_image::width() const
 {
    return imageWidth;
 }
+
