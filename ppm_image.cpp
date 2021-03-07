@@ -206,7 +206,22 @@ void ppm_image::replace(const ppm_image& image, int startx, int starty)
 
 ppm_image ppm_image::alpha_blend(const ppm_image& other, float alpha) const
 {
-   ppm_image result;
+   int blendedR, blendedG, blendedB;
+   ppm_image result = func(imageWidth,imageHeight);
+   for (int i = 0 ; i < imageHeight; i++)
+   {
+      for (int j = 0; j < imageWidth ;j++)
+      {
+         blendedR =  (float) (pixelArray[i][j].r * (1 - alpha)) + (float) ( other.pixelArray[i][j].r * alpha ) ;
+         blendedG =  (float) (pixelArray[i][j].g * (1 - alpha)) + (float) ( other.pixelArray[i][j].g * alpha ) ;
+         blendedB =  (float) (pixelArray[i][j].b * (1 - alpha)) + (float) ( other.pixelArray[i][j].b * alpha ) ;
+         //setting new pixel color
+         pixelArray[i][j].r = (unsigned char) blendedR;
+         pixelArray[i][j].g = (unsigned char) blendedG;
+         pixelArray[i][j].b = (unsigned char) blendedB;
+      }
+   }
+
    return result;
 }
 
