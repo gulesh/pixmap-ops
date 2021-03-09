@@ -64,13 +64,53 @@ int main(int argc, char** argv)
    ppm_image soup;
    soup.load("../images/soup-ascii.ppm");
 
-   int y = (int) (0.5f * (image.width() - soup.width()));
-   int x = (int) (0.5f * (image.height() - soup.height()));
+
+   //rotate image 90 degree clockwise
+   ppm_image rotatedImage = image.rotate90();
+   rotatedImage.save("earth-rotated-90.ppm");
+
+
+   //distorted image earth
+   ppm_image distortedImage = image.distortImage();
+  distortedImage.save("earth-distorted-image.ppm");
+
+   //inverted Image
+   ppm_image earthInverted = image.invertColor();
+   earthInverted.save("earth-inverted-image.ppm");
+
+   //swirl color Image
+   ppm_image swirlColoredImage = image.swirlColors();
+   swirlColoredImage.save("earth-swirledcolored-image.ppm");
+
+   //lightest extract Image
+   ppm_image listestImage = image.lightest(swirlColoredImage);
+   listestImage.save("earth-lightest-image.ppm");
+
+   //darkest extract Image
+   ppm_image darkestImage = image.darkest(swirlColoredImage);
+   darkestImage.save("earth-darkest-image.ppm");
+
+   
+   //difference extract Image
+   ppm_image differenceImage = image.difference(swirlColoredImage);
+   differenceImage.save("earth-difference-image.ppm");
+
+   //multiply extract Image
+   ppm_image multiplyImage = image.multiply(distortedImage);
+   multiplyImage.save("earth-multiply-image.ppm");
+
+   //Image is just red
+   ppm_image redImage = image.redOnly(distortedImage);
+   redImage.save("earth-red-image.ppm");
+
+   int x = (int) (0.5f * (image.width() - soup.width()));
+   int y = (int) (0.5f * (image.height() - soup.height()));
+   cout << "loaded earth: " << soup.width() << " " << soup.height() << endl;
    ppm_image background = image.subimage(x, y, soup.width(), soup.height());
    background.save("background-test.ppm");
    ppm_image blend = background.alpha_blend(soup, 0.5f);
    image.replace(blend, x, y);
    image.save("earth-blend-0.5.ppm");
-
+   
 }
 

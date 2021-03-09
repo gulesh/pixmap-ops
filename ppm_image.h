@@ -29,6 +29,7 @@ namespace agl
      ppm_image& operator=(const ppm_image& orig);
 
      virtual ~ppm_image();
+     void clear(); //helper to clear memory
 
      // load the given filename
      // returns true if the load is successful; false otherwise
@@ -74,5 +75,39 @@ namespace agl
 
      // return the height of the image
      int height() const;
+
+     //rotate an image 90 degrees clockwise
+     ppm_image rotate90() const;
+
+     //add border around the edges of the image
+     ppm_image addBorder() const;
+
+     //invert color function
+     ppm_image invertColor() const;
+
+     //distort image
+     ppm_image distortImage() const;
+     
+     //swirl color
+     ppm_image swirlColors() const;
+
+     //extract red
+     ppm_image redExtract() const;
+
+     //lightest
+     ppm_image lightest(const ppm_image& other) const;
+
+     //darkest
+     ppm_image darkest(const ppm_image& other) const;
+
+     //difference
+     ppm_image difference(const ppm_image& other) const;
+
+     //multiply
+     ppm_image multiply(const ppm_image& other) const;
+
+     //red only
+     ppm_image redOnly(const ppm_image& other) const;
+
   };
 }
