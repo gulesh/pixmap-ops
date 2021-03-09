@@ -399,18 +399,6 @@ ppm_image ppm_image::rotate90() const
    return result;
 }
 
-ppm_image ppm_image::redOnly(const ppm_image& other) const
-{
-   ppm_image result = ppm_image(imageWidth,imageHeight);
-   for (int i = 0 ; i < imageHeight; i++)
-    {
-       for (int j = 0; j < imageWidth ;j++)
-       {
-         result.pixelArray[i][j].r = std::max(pixelArray[i][j].r, other.pixelArray[i][j].r);
-       }
-    }
-    return result;
-}
 
 ppm_image ppm_image::lightest(const ppm_image& other) const
 {
@@ -471,6 +459,19 @@ ppm_image ppm_image::multiply(const ppm_image& other) const
     return result;
 }
 
+ppm_image ppm_image::redOnly(const ppm_image& other) const
+{
+   ppm_image result = ppm_image(imageWidth,imageHeight);
+   for (int i = 0 ; i < imageHeight; i++)
+    {
+       for (int j = 0; j < imageWidth ;j++)
+       {
+         result.pixelArray[i][j].r = std::max(pixelArray[i][j].r, other.pixelArray[i][j].r);
+       }
+    }
+    return result;
+}
+
 //not working as expected need to edit
 ppm_image ppm_image::addBorder() const
 {  
@@ -507,27 +508,46 @@ ppm_image ppm_image::addBorder() const
 
 ppm_image ppm_image::redExtract() const
 {
-   int red =0;
-   int blue =0;
-   int green =0;
    ppm_image result = ppm_image(imageWidth,imageHeight);
    for (int i = 0 ; i < imageHeight; i++)
     {
        for (int j = 0; j < imageWidth ;j++)
        {
-         result.pixelArray[i][j] = pixelArray[i][j];
-         red = (int) result.pixelArray[i][j].r ;
-         green = (int) result.pixelArray[i][j].g;
-         blue = (int) result.pixelArray[i][j].b;
-         if (red > 100 && ((blue <100) || (green < 100)))
-         {
-            result.pixelArray[i][j].g = (unsigned) 0;
-            result.pixelArray[i][j].b = (unsigned) 0;
+         result.pixelArray[i][j].r = pixelArray[i][j].r;
+         result.pixelArray[i][j].g = 0;
+         result.pixelArray[i][j].b = 0;
+       }
+    }
+    return result;
 
-         }
-         result.pixelArray[i][j].r = (unsigned) 0;
-         result.pixelArray[i][j].g = (unsigned) 0;
-         result.pixelArray[i][j].b = (unsigned) 0;
+}
+
+ppm_image ppm_image::greenExtract() const
+{
+   ppm_image result = ppm_image(imageWidth,imageHeight);
+   for (int i = 0 ; i < imageHeight; i++)
+    {
+       for (int j = 0; j < imageWidth ;j++)
+       {
+         result.pixelArray[i][j].r = 
+         result.pixelArray[i][j].g = pixelArray[i][j].g;
+         result.pixelArray[i][j].b = 0;
+       }
+    }
+    return result;
+
+}
+
+ppm_image ppm_image::blueExtract() const
+{
+   ppm_image result = ppm_image(imageWidth,imageHeight);
+   for (int i = 0 ; i < imageHeight; i++)
+    {
+       for (int j = 0; j < imageWidth ;j++)
+       {
+         result.pixelArray[i][j].r = 0;
+         result.pixelArray[i][j].g = 0;
+         result.pixelArray[i][j].b = pixelArray[i][j].b;
        }
     }
     return result;

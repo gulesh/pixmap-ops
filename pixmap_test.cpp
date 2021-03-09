@@ -8,7 +8,6 @@ int main(int argc, char** argv)
    
    ppm_image image;
    image.load("../images/feep.ppm");
-   //cout <<"r 100 :  " << (int) image.get(0,1).r << endl;  //test to make sure we get the right pixel
    image.save("feep-test-save.ppm"); // should match original
 
    // should print 4 4
@@ -102,6 +101,18 @@ int main(int argc, char** argv)
    //Image is just red
    ppm_image redImage = image.redOnly(distortedImage);
    redImage.save("earth-red-image.ppm");
+
+   //red extract
+   ppm_image redExtract = image.redExtract();
+   redExtract.save("earth-redextract-image.ppm");
+
+   //red extract
+   ppm_image greenExtract = image.greenExtract();
+   greenExtract.save("earth-greenextract-image.ppm");
+
+   //red extract
+   ppm_image blueExtract = image.blueExtract();
+   blueExtract.save("earth-blueextract-image.ppm");
 
    int x = (int) (0.5f * (image.width() - soup.width()));
    int y = (int) (0.5f * (image.height() - soup.height()));

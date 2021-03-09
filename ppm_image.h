@@ -94,6 +94,12 @@ namespace agl
      //extract red
      ppm_image redExtract() const;
 
+     //extract red
+     ppm_image greenExtract() const;
+
+     //extract red
+     ppm_image blueExtract() const;
+
      //lightest
      ppm_image lightest(const ppm_image& other) const;
 
