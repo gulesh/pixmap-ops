@@ -197,14 +197,29 @@ bool ppm_image::save(const std::string& filename) const
     return result;
 }
 
+//got a unique image
+// ppm_image ppm_image::flip_horizontal() const
+// {
+//     ppm_image result = ppm_image(imageWidth,imageHeight);
+//     for (int i = 0 ; i <imageHeight; i++)
+//     {
+//        for (int j = 0 ; j < imageWidth ;j++)
+//        {
+//           result.pixelArray[i][j]= pixelArray[imageHeight - j - 1][j];
+//        }
+//     }
+
+//     return result;
+// }
+
 ppm_image ppm_image::flip_horizontal() const
 {
     ppm_image result = ppm_image(imageWidth,imageHeight);
     for (int i = 0 ; i <imageHeight; i++)
     {
-       for (int j = imageWidth -1 ; j >= 0 ;j--)
+       for (int j = 0 ; j < imageWidth ;j++)
        {
-          result.pixelArray[i][imageWidth-j+1]= pixelArray[i][j];
+          result.pixelArray[i][j]= pixelArray[imageHeight - i - 1][j];
        }
     }
 
