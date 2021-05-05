@@ -100,7 +100,7 @@ pixmap-ops/build $ ../bin/pixmap_art
 
 <img width="399" alt="Screen Shot 2021-05-05 at 3 53 00 PM" src="https://user-images.githubusercontent.com/60520906/117200995-21f29380-adba-11eb-923b-39b13b0a5403.png">
 
--Green
+- Green
 
 <img width="399" alt="Screen Shot 2021-05-05 at 3 53 19 PM" src="https://user-images.githubusercontent.com/60520906/117201025-2919a180-adba-11eb-9701-13fd55286583.png">
 
